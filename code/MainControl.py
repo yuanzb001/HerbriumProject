@@ -19,10 +19,6 @@ data_transforms = transforms.Compose([
     ])
 
 data_dir = '/pless_nfs/home/yuanzhuobin/project/Herbarium/data'
-# fileNameList = os.listdir(data_dir)
-# print(fileNameList)
-# label_list = ['bees']*len(fileNameList)
-# print(label_list)
 
 image_datasets = myDataSet(data_dir, fileNameList, label_list, data_transforms)
 print(image_datasets)
