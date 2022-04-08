@@ -1,0 +1,31 @@
+from __future__ import print_function, division
+from torchvision import transforms
+import os
+
+from MyDataLoader import myDataSet
+from DataExtraction import DataExtraction
+from ModelTrainProcess import ModelTrain
+
+dataUtil = DataExtraction('/pless_nfs/home/yuanzhuobin/project/Herbarium/data/train_metadata.json')
+fileNameList, label_list = dataUtil.getImagePathandLabel()
+
+print(fileNameList)
+
+data_transforms = transforms.Compose([
+        transforms.RandomResizedCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+data_dir = '/pless_nfs/home/yuanzhuobin/project/Herbarium/data'
+# fileNameList = os.listdir(data_dir)
+# print(fileNameList)
+# label_list = ['bees']*len(fileNameList)
+# print(label_list)
+
+image_datasets = myDataSet(data_dir, fileNameList, label_list, data_transforms)
+print(image_datasets)
+
+m_modelTrain = ModelTrain(image_datasets)
+m_modelTrain.fitModel()
