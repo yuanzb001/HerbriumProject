@@ -7,6 +7,7 @@ import time
 import copy
 
 from ResNet50Model import ResNet50
+from ResNet18Model import ResNet18
 
 class ModelTrain():
     def __init__(self, m_datasets, ratio):
@@ -17,8 +18,8 @@ class ModelTrain():
         self.dataset_sizes['train'] = int(len(self.datasets)*ratio)
         self.dataset_sizes['test'] = int(len(self.datasets)) - int(len(self.datasets)*ratio)
         self.train_dataset, self.test_dataset = torch.utils.data.random_split(self.datasets,[self.dataset_sizes['train'], self.dataset_sizes['test']], generator=torch.Generator().manual_seed(0))
-        self.dataloaders['train'] = torch.utils.data.DataLoader(self.train_dataset, batch_size=128, shuffle=True, num_workers = 16)
-        self.dataloaders['test'] = torch.utils.data.DataLoader(self.test_dataset, batch_size=32, shuffle=True, num_workers = 16)
+        self.dataloaders['train'] = torch.utils.data.DataLoader(self.train_dataset, batch_size=128, shuffle=True, num_workers=16)
+        self.dataloaders['test'] = torch.utils.data.DataLoader(self.test_dataset, batch_size=32, shuffle=True, num_workers=16)
         self.class_names = self.datasets.classes
         # self.device = torch.device("cpu")
         self.device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
@@ -86,9 +87,11 @@ class ModelTrain():
         model.load_state_dict(best_model_wts)
         return model
 
-    def fitModel(self):
-
-        model_ft = ResNet50()
+    def fitModel(self, type):
+        if type == 'ResNet50':
+            model_ft = ResNet50(len(self.class_names))
+        elif type == 'ResNet18':
+            model_ft = ResNet18(len(self.class_names))
         num_ftrs = model_ft.fc.in_features
         model_ft.fc = nn.Linear(num_ftrs, len(self.class_names))
         model_ft = model_ft.to(self.device)
@@ -96,5 +99,5 @@ class ModelTrain():
         criterion = nn.CrossEntropyLoss()
         # Observe that all parameters are being optimized
         optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
-        model_ft = self.train_model(model_ft, criterion, optimizer_ft,num_epochs=600)
+        model_ft = self.train_model(model_ft, criterion, optimizer_ft,num_epochs=300)
         return model_ft

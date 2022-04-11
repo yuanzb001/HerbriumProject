@@ -25,4 +25,4 @@ image_datasets = myDataSet(data_dir, fileNameList, label_list, data_transforms)
 #print(image_datasets)
 
 m_modelTrain = ModelTrain(image_datasets, ratio = 0.7)
-best_model = m_modelTrain.fitModel()
+best_model = m_modelTrain.fitModel('ResNet18')

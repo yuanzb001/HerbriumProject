@@ -56,7 +56,7 @@ class ResNet50DownBlock(nn.Module):
         return F.relu(x_shortcut + out)
 
 class ResNet50(nn.Module):
-    def __init__(self):
+    def __init__(self, class_size):
         super(ResNet50, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -98,8 +98,7 @@ class ResNet50(nn.Module):
         )
 
         self.avgpool = nn.AdaptiveAvgPool2d(output_size=(1, 1))
-
-        self.fc = nn.Linear(2048, 10)
+        self.fc = nn.Linear(2048, class_size)
 
     def forward(self, x):
         out = self.conv1(x)
